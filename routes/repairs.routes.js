@@ -6,6 +6,9 @@ const {
     validateSession,
     validateRole
 } = require('../middlewares/repairs.middlewares');
+
+const { protectToken } = require('../middlewares/users.middlewares');
+
 const { 
     createRepairValidations, 
     checkValidations 
@@ -21,9 +24,13 @@ const {
 
 const router = express.Router();
 
-router.get( '/', validateSession, validateRole, getAllRepairs );
-
 router.post( '/', createRepairValidations, checkValidations, createRepair );
+
+// Token Needed
+
+router.use(protectToken);
+
+router.get( '/', validateSession, validateRole, getAllRepairs );
 
 router.get( '/:id', validateSession, validateRole, repairExists, getRepairById );
 

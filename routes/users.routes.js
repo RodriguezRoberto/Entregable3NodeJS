@@ -41,4 +41,4 @@ router.patch( '/:id', userExists, protectAccountOwner, updateUserbyId );
 
 router.delete( '/:id', userExists, protectAccountOwner, deleteUserById );
 
-module.exports = { usersRouter: router };
+module.exports = { usersRouter: router }; 
