@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
 const { User } = require('../models/user.model');
 const { Repair } = require('../models/repair.model');
@@ -6,6 +7,8 @@ const { Repair } = require('../models/repair.model');
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
+
+dotenv.config({ path: './config.env' });
 
 const protectToken = catchAsync(async (req, res, next) => {
   let token;
@@ -33,7 +36,7 @@ const protectToken = catchAsync(async (req, res, next) => {
 
   if (!user) {
     return next(
-      new AppError('The owner of this token is no longer available', 403)
+      new AppError('The owner of this token is no longer active', 403)
     );
   }
 
@@ -43,7 +46,7 @@ const protectToken = catchAsync(async (req, res, next) => {
 
 const protectAdmin = catchAsync(async (req, res, next) => {
   if (req.sessionUser.role !== 'admin') {
-    return next(new AppError('Access not granted', 403));
+    return next(new AppError('Access not granted, you need to have an admin account', 403));
   }
 
   next();
@@ -53,13 +56,13 @@ const userExists = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const user = await User.findOne({ 
-    where: { id, status: "available" },
+    where: { id, status: "active" },
     attributes: { exclude: ['password'] },
     include: [{ model: Repair }]
   });
 
   if (!user) {
-    return next(new AppError('No user found with the given ID or available status', 404));
+    return next(new AppError('No user found with the given ID or active status', 404));
   }
 
   // Add user data to the req object

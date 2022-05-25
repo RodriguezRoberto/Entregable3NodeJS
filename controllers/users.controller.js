@@ -14,7 +14,7 @@ dotenv.config({ path: './config.env' });
 
 const getAllUsers = catchAsync(async ( req, res ) => {
     const users = await User.findAll({
-        where: { status: "available" },
+        where: { status: "active" },
         attributes: { exclude: ['password'] },
         include: [{ model: Repair }]
     });
@@ -62,7 +62,7 @@ const login = catchAsync(async (req, res, next) => {
   
     // Validate that user exists with given email
     const user = await User.findOne({
-      where: { email, status: 'available' },
+      where: { email, status: 'active' },
     });
   
     // Compare password with db
